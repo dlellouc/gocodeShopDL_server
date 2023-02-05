@@ -1,2 +1,2 @@
 
-export const productsAllowedUpdates = ['price'];
+export const productsAllowedUpdates = ['title', 'price', 'description', 'category', 'image'];
