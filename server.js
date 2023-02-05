@@ -4,6 +4,7 @@ import cors from 'cors'
 import { productsAllowedUpdates } from './data/data.js'
 
 import { mongoose } from 'mongoose'
+import { addProductController, deleteProductController, getAllProductsController, getOneProductController, updateProductController } from './controllers/Products.js'
 
 import * as dotenv from 'dotenv'
 
@@ -20,34 +21,6 @@ app.use(cors());
 mongoose.set('strictQuery', true);
 
 
-// schemas
-const ProductSchema = new mongoose.Schema({                
-    title: {
-        type: String,
-        required: true
-    },
-    price: {
-        type: String,
-        required: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    category: {
-        type: String,
-        required: true
-    },
-    image: {
-        type: String,
-        required: true
-    }
-})
-
-
-// model
-const Products = mongoose.model('Product', ProductSchema);      // Products = collection, row = document
-
 
 // routes
 
@@ -56,81 +29,11 @@ const Products = mongoose.model('Product', ProductSchema);      // Products = co
 // put - edit an item inside the db - valid operations --> findOne({condition:condition}) --> model.save()
 // delete - delete an item from the db - findOneAndDelete({condition:condition})
 
-app.get('/api/products/getAllProducts', async (req, res) => {
-    try {
-        const allProducts = await Products.find({});
-        res.status(200).send(allProducts);
-    } catch(error) {
-        console.log(error);
-        res.status(500).send({message:{error}});
-    }
-})
-
-app.get('/api/products/getProduct/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const product = await Products.findOne({ _id: id });
-        if (!product) {
-            res.status(404).send({ message: 'product does not exist' });
-        }
-
-        res.status(200).send(product);
-    
-    } catch(error) {
-        console.log(error);
-        res.status(500).send({message:{error}});
-    }
-})
-
-app.post('/api/products/addProduct', async (req, res) => {
-    try {
-        const { title, price, description, category, image } = req.body;
-        const newProduct = new Products({title: title, price: price, description: description, category: category, image: image});
-        await newProduct.save();
-        res.status(200).send(newProduct);
-    } catch(error) {
-        console.log(error);
-        res.status(500).send({message:{error}});
-    }
-});
-
-app.put('/api/products/updateProduct/:id', async (req, res) => {
-    const updates = Object.keys(req.body);
-    const isValidOperation = updates.every((update) => productsAllowedUpdates.includes(update));
-
-    if (!isValidOperation) {
-        res.status(400).send({ message: "Invalid updates" });
-    }
-
-    try {
-        const { id } = req.params;
-        const product = await Products.findOne({ _id: id });
-        if (!product) {
-            res.status(404).send({ message: 'product does not exist' });
-        }
-
-        updates.forEach((update) => (product[update] = req.body[update]));
-        await product.save();
-        res.status(200).send(product);
-    } catch(error) {
-        console.log(error);
-        res.status(500).send({message:{error}});
-    }
-})
-
-app.delete('/api/products/deleteProduct/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const deletedProduct = await Products.findOneAndDelete({_id: id});
-        if (!deletedProduct) {
-            res.status(404).send({message: "no product with such id"});
-        }
-        res.status(200).send(deletedProduct);
-    } catch(error) {
-        console.log(error);
-        res.status(500).send({message:error});
-    }
-})
+app.get('/api/products/getAllProducts', getAllProductsController);
+app.get('/api/products/getOneProduct/:id', getOneProductController);
+app.post('/api/products/addProduct', addProductController);
+app.put('/api/products/updateProduct/:id', updateProductController);
+app.delete('/api/products/deleteProduct/:id', deleteProductController);
 
 
 // without mongodb atlas :
