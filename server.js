@@ -37,24 +37,24 @@ app.delete('/api/products/deleteProduct/:id', deleteProductController);
 
 
 // without mongodb atlas :
-mongoose.connect('mongodb://127.0.0.1:27017/shop_db', {               // shop_db = db
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+// mongoose.connect('mongodb://127.0.0.1:27017/shop_db', {               // shop_db = db
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true
+// })
 
-// listener at the bottom which concludes the listening function to fulfill all of the requests
-app.listen(PORT, () => {
-    console.log('server listening at port *')
-});
+// // listener at the bottom which concludes the listening function to fulfill all of the requests
+// app.listen(PORT, () => {
+//     console.log('server listening at port *')
+// });
 
 
 // with mongodb atlas :
-// mongoose.connect('mongodb at atlas', {               
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// }, (info) => {
-//     console.log('info ?', info);
-//     app.listen(PORT, () => {
-//         console.log('server listening at port *')
-//     })
-// })
+mongoose.connect(`mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?retryWrites=true&w=majority`, {               
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}, (info) => {
+    console.log('info ?', info);
+    app.listen(PORT, () => {
+        console.log('server listening at port *')
+    })
+})

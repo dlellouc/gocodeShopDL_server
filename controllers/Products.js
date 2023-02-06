@@ -22,9 +22,9 @@ export const getOneProductController = async (req, res) => {
 
         if (!product) {
             res.status(404).send({ message: 'product does not exist' });
+        } else {
+            res.status(200).send(product);
         }
-
-        res.status(200).send(product);
     
     } catch(error) {
         console.log(error);
@@ -51,24 +51,24 @@ export const updateProductController = async (req, res) => {
 
     if (!isValidOperation) {
         res.status(400).send({ message: "Invalid updates" });
-    }
-
-    try {
-        const { id } = req.params;
-        const product = await getOneProduct(id);
-
-        if (!product) {
-            res.status(404).send({ message: 'product does not exist' });
+    } else {
+        try {
+            const { id } = req.params;
+            const product = await getOneProduct(id);
+    
+            if (!product) {
+                res.status(404).send({ message: 'product does not exist' });
+            } else {
+                updates.forEach((update) => (product[update] = req.body[update]));
+                await product.save();
+        
+                res.status(200).send(product);
+            }
+        
+        } catch(error) {
+            console.log(error);
+            res.status(500).send({message:{error}});
         }
-
-        updates.forEach((update) => (product[update] = req.body[update]));
-        await product.save();
-
-        res.status(200).send(product);
-
-    } catch(error) {
-        console.log(error);
-        res.status(500).send({message:{error}});
     }
 }
 
@@ -79,8 +79,9 @@ export const deleteProductController = async (req, res) => {
 
         if (!deletedProduct) {
             res.status(404).send({message: "no product with such id"});
+        } else {
+            res.status(200).send(deletedProduct);
         }
-        res.status(200).send(deletedProduct);
 
     } catch(error) {
         console.log(error);
