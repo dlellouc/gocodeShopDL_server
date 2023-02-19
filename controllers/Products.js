@@ -40,6 +40,7 @@ export const addProductController = async (req, res) => {
         res.status(200).send(newProduct);
 
     } catch(error) {
+        console.log(req.body)
         console.log(error);
         res.status(500).send({message:{error}});
     }
@@ -48,6 +49,7 @@ export const addProductController = async (req, res) => {
 export const updateProductController = async (req, res) => {
     const updates = Object.keys(req.body);
     const isValidOperation = updates.every((update) => productsAllowedUpdates.includes(update));
+    console.log('in update')
 
     if (!isValidOperation) {
         res.status(400).send({ message: "Invalid updates" });

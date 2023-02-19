@@ -17,7 +17,9 @@ const app = express();
 
 // middlewares for the server
 app.use(express.json());
+// app.use(express.urlencoded({extended: false})) // test for empty body
 app.use(cors());
+
 mongoose.set('strictQuery', true);
 
 
